@@ -1,0 +1,11 @@
+# depslib dependency file v1.0
+1534056566 source:d:\dev\cpp\practice\consoletest\main.cpp
+	<iostream>
+	<string>
+	<locale>
+
+1534056566 source:d:\dev\practice\codeblocks\consoletest\main.cpp
+	<iostream>
+	<string>
+	<locale>
+

@@ -1,0 +1,21 @@
+http://blog.sina.com.cn/s/blog_6a0d357d0102xdhp.html
+免安装一步到位的CodeBlocks-17.12+wxWidgets-3.1.0 
+
+
+创建一个wxWidgets程序，按照下文4.3.2 设置编译参数执行一遍，就能顺利完成任务了。
+http://www.docin.com/p-2070991265.html
+
+
+基于CodeBlocks上的wxWidgets开发环境配置
+https://www.cnblogs.com/pingge/p/3359506.html
+
+cd "D:\Dev\wxWidgets-3.1.0\build\msw"
+mingw32-make -f makefile.gcc clean
+mingw32-make -f makefile.gcc MONOLITHIC=1 SHARED=1 UNICODE=1 BUILD=debug
+mingw32-make -f makefile.gcc MONOLITHIC=1 SHARED=0 UNICODE=1 BUILD=debug
+mingw32-make -f makefile.gcc MONOLITHIC=0 SHARED=1 UNICODE=1 BUILD=release
+mingw32-make -f makefile.gcc MONOLITHIC=1 SHARED=0 UNICODE=1 BUILD=release
+
+
+
+
