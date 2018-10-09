@@ -1,0 +1,475 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="renderer" content="webkit">
+		<title>上网认证系统</title>
+		<link href="../share/addisclaimer-tpl/res/main_new.css" rel="stylesheet" type="text/css">
+		<script language="javascript" src="../share/res/js/jquery-1.8.2.min.js"></script>
+
+        <!-- 腾讯提供的生成二维码的库 -->
+        <script language="javascript" src="../share/res/js/pcauth.js"></script>
+
+		<script language="javascript" src="../share/res/js/logic_new.js"></script>
+		<script language="javascript" src="../share/res/js/jquery.bslider.js"></script>
+		<script language="javascript" src="../share/res/js/qrcode_new.js"></script>
+		<script language="javascript" src="../share/res/js/ui-addisclaimer-pc.js"></script>
+		<script>
+			var g_ismobile = false,//是否手机模式
+			g_hasDisclaimer = true,//是否含免责声明
+			g_accountTabTitle = "新阳集团上网认证系统",//密码认证标题
+			g_accountTabText = "内部职工，使用用户名密码方式登录",//密码认证文字
+			g_smsTabTitle = "短信认证",//短信认证标题
+			g_smsTabText = "访客用户，输入您的手机号码获取临时上网密码",//短信认证文字
+			g_qrcodeTitle = "二维码认证",//二维码认证标题
+			g_qrcodeText = "使用已通过认证的手机扫描二维码，以使PC通过认证",//二维码认证文字
+			g_wechatTabTitle = "微信认证",//微信认证标题
+			g_wechatTabText = "可以通过以下方式进行认证",//微信认证文字
+			g_wechatAccount = "微信公众账号",//公众帐号
+			g_loginButtonText = "登录",//登录按钮文字
+			g_pwdButtonText = "获取验证码",//获取验证码按钮文字
+			g_versionText = "版权所有",//版权文字
+			logo_url = "../share/addisclaimer-tpl/res/img/logo_new.png",//logo img
+			g_adItems = [{src:'../share/addisclaimer-tpl/res/img/default.jpg',url:''}];//广告内容
+		</script>
+		
+		<link href="../share/addisclaimer-tpl/res/pc_colors_blue.css" rel="stylesheet" type="text/css"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	</head>
+	<body>
+		<div class="top_bg"></div>
+		<div class="container">
+			<div class="header">
+				<h1><img class="logo" src="../share/addisclaimer-tpl/res/img/logo_new.png"></h1>
+			</div>
+			<div class="login_bidy">
+				<div class="login_container">
+				<div class="advertising" id="slideContainer">
+					</div>
+					<div class="login_right">
+						<div class="login_operate" id="login_operate">
+							
+							<!--手机认证-->
+							<div class="form" id="mode_sms" style="display:none;">
+								<div class="form_box">
+									<!--提示与反馈信息-->
+									<div class="login_box_title">
+										<span class="auth_title">短信认证</span>
+										<p>访客用户，输入您的手机号码获取临时上网密码</p>
+										<dl class="login_box_msg" style="display:none">
+											<dt></dt>
+											<dd></dd>
+										</dl>
+									</div>
+									<!--提示与反馈信息-->
+									<div class="login_box">
+										<ul>
+											<li class="phone">
+												<label class="txt_default" for="sms_name">手机号码</label>
+												<input id="sms_name" name="smsune" class="input focus" type="text" />
+											</li>
+											<li class="login_btn sms_go">
+												<input id="sms_getCodeBtn" onclick="onGetSmsCode();"  class="button" type="button" value="获取验证码">
+											</li>
+											<li class="sms">
+												<label class="txt_default" for="sms_pwd">输入收到的短信验证码</label>
+												<input id="sms_pwd" name="smspass" class="input" value="" type="input" />
+											</li>
+										</ul>
+									</div>
+									<!--记住登录状态-->
+									<div class="login_disclaimer" style="margin-bottom: 5px;" >
+										<dl>
+											<dt>
+											<input name="" id="rememberSms" type="checkbox" value="">
+											</dt>
+											<dd> <label for="rememberSms">记住登录状态</label></dd>
+										</dl>
+									</div>
+									<!--免责声明-->
+									<div class="login_disclaimer disclaimerdiv" >
+										<dl style="overflow:hidden">
+											<dt>
+											<input name="" id="sms_disclaimer" type="checkbox"   value="">
+											</dt>
+											<dd style="width:270px;"><label for="sms_disclaimer">我已阅读并同意免责声明条款</label><a href="#" onClick="showDisclaimer()" class="showStatement">查看详情</a></dd>
+										</dl>
+									</div>
+									<!--占位行-->
+									<div class="blankspan"></div>
+									<!--登录按钮-->
+									<div class="btn_ok">
+										<div class="login_btn login_btn_ok">
+											<input id="sms_submitBtn" onclick="onSmsLogin();"  type="button"  class="button" value="登录" >
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- 帐号认证 -->
+							<div class="form" id="mode_password" style="display:none;">
+								<div class="form_box">
+									<!--提示与反馈信息-->
+									<div class="login_box_title">
+										<span class="auth_title">新阳集团上网认证系统</span>
+										<p>内部职工，使用用户名密码方式登录</p>
+										<dl class="login_box_msg" style="display:none;">
+											<dt></dt>
+											<dd></dd>
+										</dl>
+									</div>
+									<div class="login_box">
+										<ul>
+											<li class="username">
+												<label  class="txt_default" for="password_name">用户名</label>
+												<input id="password_name" name="une" class="input focus" type="text" />
+											</li>
+											<li class="password"><span class="shiftKey" style="display:none" title="大写锁定已开启">A</span>
+												<label class="txt_default" for="password_pwd">密码</label>
+												<input id="password_pwd" name="pass" class="input" value="" type="password" />
+											</li>
+										</ul>
+									</div>
+									<!--记住登录状态-->
+									<div class="login_disclaimer" style="margin-bottom: 5px;" >
+										<dl>
+											<dt>
+											<input name="" id="rememberPwd" type="checkbox" value="">
+											</dt>
+											<dd> <label for="rememberPwd">记住登录状态</label></dd>
+										</dl>
+									</div>
+									<!--免责声明-->
+									<div class="login_disclaimer disclaimerdiv">
+										<dl style="overflow:hidden">
+											<dt>
+											<input name="" id="password_disclaimer" type="checkbox"   value="">
+											</dt>
+											<dd style="width:270px;"> <label for="password_disclaimer">我已阅读并同意免责声明条款</label> <a href="#" onClick="showDisclaimer()" class="showStatement">查看详情</a></dd>
+										</dl>
+									</div>
+									<!--占位行-->
+									<div class="blankspan"></div>
+									<!--登录按钮-->
+									<div class="btn_ok">
+										<div class="login_btn login_btn_ok">
+											<input name="btlogin" id="password_submitBtn" class="button" type="button" onclick="onPwdLogin();" value="登录" tabindex="5">
+										</div>
+										<div class="e_p"><span class="e_ico"></span><a href="#" class="changePsw" onClick="activateTab('changePwd')">修改用户密码</a></div>
+									</div>
+								</div>
+							</div>
+							
+							<!-- 微信认证 -->
+							<div class="form" id="mode_wechat" style="display:none;">
+								<div class="form_box">
+									<!--提示与反馈信息-->
+									<div class="login_box_title">
+										<span class="auth_title">微信认证</span>
+										<p>可以通过以下方式进行认证</p>										
+									</div>
+									<div class="login_box">
+                                        <div style="overflow:hidden;cursor:pointer" class="wechat_qrcode" onclick="showWechatImg('qrcode')">
+                                            <img src="../share/default-tpl/res/img/erweima.png" class="wechat_step_img">
+                                            <div class="wechat_step"><div>微信扫描“二维码”</div><div>二维码海报通常张贴在可见处</div></div>
+                                        </div>
+                                        <div style="overflow:hidden;margin-top:30px;cursor:pointer" class="wechat_account" onclick="showWechatImg('account')">
+                                            <img src="../share/default-tpl/res/img/wechat.png" class="wechat_step_img">
+                                            <div class="wechat_step"><div>通过关注公众号上网</div>{微信公众账号}</div>
+                                        </div>
+                                        <div style="overflow:hidden;margin-top:30px;cursor:pointer" class="wechat_wifi" onclick="showWechatImg('wifi')">
+                                            <img src="../share/default-tpl/res/img/erweima.png" class="wechat_step_img">
+                                            <div class="wechat_step"><div>微信连Wi-Fi</div>{Wi-Fi SSID}</div>
+                                        </div>
+                                        <div class="statement-content" style="position: relative;background: none;">
+                                            <h1 style="text-align: center;">欢迎上网</h1>
+                                            <div style="box-sizing:border-box;border:1px solid #e5e5e5;overflow:hidden;margin:0 auto;text-align:center;width:130px;height:130px;" id="qrcode_zone"></div>
+                                            <h3 style="text-align: center;margin-top: 5px;font-size: 105%;font-weight: normal;">使用已通过认证的手机扫描二维码，以使PC通过认证</h3>
+                                            <h5 style="text-align: center;margin-top: 5px;font-weight: normal;">（若扫描无反应，请尝试手动刷新页面再去扫描）</h5>
+                                        </div>
+									</div>
+									
+									<!--占位行-->
+									<div class="blankspan"></div>
+									
+								</div>
+							</div>
+							
+							<!-- 二维码认证 -->
+							<div class="form" id="mode_qrcode" style="display:none;">
+								<div class="form_box">
+									<!--提示与反馈信息-->
+									<div class="login_box_title">
+										<span class="auth_title">二维码认证</span>
+										<p>使用已通过认证的手机扫描二维码，以使PC通过认证</p>
+										<dl class="login_box_msg" style="display:none;">
+											<dt></dt>
+											<dd></dd>
+										</dl>
+									</div>
+									<div class="login_box">
+										<div id="qrcodeImg"></div>										
+									</div>
+									<!--占位行-->
+									<div class="blankspan"></div>
+									
+								</div>
+							</div>
+							
+							<!-- 修改密码 -->
+							<div class="form" id="mode_changePwd" style="display:none">
+								<div class="form_box">
+									<!--提示与反馈信息-->
+									<div class="login_box_title">
+										<p id="changePwd_first"></p>
+										<dl class="login_box_msg" style="display:none">
+											<dt></dt>
+											<dd></dd>
+										</dl>
+									</div>
+									<div class="login_box">
+										<ul>
+											<li class="username">
+												<label  class="txt_default" for="changePwd_name">用户名</label>
+												<input id="changePwd_name" name="une" class="input focus" type="text" />
+											</li>
+											<li class="password"><span class="shiftKey" style="display:none" title="大写锁定已开启">A</span>
+												<label class="txt_default" for="changePwd_oldPwd">输入旧密码</label>
+												<input id="changePwd_oldPwd" name="pass" class="input" value="" type="password" />
+											</li>
+											<li class="password"><span class="shiftKey" style="display:none" title="大写锁定已开启">A</span>
+												<label class="txt_default" for="changePwd_newPwd">输入新密码</label>
+												<input id="changePwd_newPwd" name="pass" class="input" value="" type="password" />
+											</li>
+											<li class="password"><span class="shiftKey" style="display:none" title="大写锁定已开启">A</span>
+												<label class="txt_default" for="changePwd_newPwd2">再次输入</label>
+												<input id="changePwd_newPwd2" name="pass" class="input" value="" type="password" />
+											</li>
+										</ul>
+									</div>
+
+									<!--确定按钮-->
+									<div class="btn_ok">
+										<div class="login_btn login_btn_ok">
+											<input name="btlogin" id="changePwd_submitBtn" class="button" type="button" onclick="onChangePwd()" value="确定" tabindex="5">
+										</div>
+										<div class="e_p"><span class="e_ico"></span><a href="#" class="changePsw" onClick="activateTab('password')">返回密码登录</a></div>
+									</div>
+								</div>
+							</div>
+							
+							<!--免认证-->
+							<div class="form" id="mode_freeauth" style="display:none;">
+								<div class="form_box">
+									<!--提示与反馈信息-->
+									<div class="login_box_title">
+										<span class="auth_title">免认证上网</span>
+										<p>此认证方式，不需要重新认证。点击“立即上网”即可登录。</p>
+										<dl class="login_box_msg" style="display:none">
+											<dt></dt>
+											<dd></dd>
+										</dl>
+									</div>
+									
+									<!--免责声明-->
+									<div class="login_disclaimer disclaimerdiv" >
+										<dl style="overflow:hidden">
+											<dt>
+											<input name="" id="freeauth_disclaimer" type="checkbox" value="">
+											</dt>
+											<dd style="width:270px;"><label for="freeauth_disclaimer">我已阅读并同意免责声明条款</label><a href="#" onClick="showDisclaimer()" class="showStatement">查看详情</a></dd>
+										</dl>
+									</div>
+									
+									<!--占位行-->
+									<div class="blankspan"></div>
+									<!--登录按钮-->
+									<div class="btn_ok">
+										<div class="login_btn login_btn_ok">
+											<input id="freeauth_submitBtn" onclick="onFreeauthLogin();"  type="button"  class="button" value="立即上网" >
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<!-- 注销页面 -->
+							<div class="form" id="mode_logout" style="display:none">
+								<div class="form_box">
+									<!--提示与反馈信息-->
+									<div class="login_box_title">
+										<p>用户：<b id="logout_name"></b>，您已通过上网认证！</p>
+										<dl class="login_box_msg" style="display:none">
+											<dt></dt>
+											<dd></dd>
+										</dl>
+									</div>
+									<!--确定按钮-->
+									<div class="btn_ok">
+										<div class="login_btn login_btn_ok">
+											<input name="btlogin" id="logout_submitBtn" class="button" type="button" onclick="onLogout()" value="注销" tabindex="5">
+										</div>
+										<div class="e_p"><span class="e_ico"></span><a href="#" class="changePsw" id="flux" target="_blank">查询流量信息</a></div>
+									</div>
+								</div>
+							</div>
+							
+							<div class="tab tabBackground" style="-moz-border-radius: 0 0 3px 3px; -webkit-border-radius: 0 0 3px 3px; border-radius: 0 0 3px 3px !important;">
+								<ul id="tabtitle" style="height:52px;padding-left:15px;">
+									
+								</ul>
+							</div>
+							
+						</div>
+						<div class="login_link"><a class="no1" href="#" ></a> </div>
+					</div>
+				</div>
+			</div>
+			<div class="footer">
+				<div class="footer_body">
+					<div class="center">
+						版权所有
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div id="statement_qrcode" class="statement uplayer">
+			<div class="inner">
+				<div><a href="#" onClick="hideWechatImg('qrcode')" class="close">×</a></div>
+				<div class="statement-content">
+					<h1 style="text-align: center;">二维码扫描</h1>
+					<div style="overflow:hidden;width:70%;margin:0 auto">
+						<div style="width:29%;float:left;padding:2%">				
+							<b>第一步：</b><br><br>
+							<span>寻找张贴有“我要上网”的二维码海报</span><br><br>
+							<div>
+								<img src="../share/default-tpl/res/img/wechat1.png">
+							</div>
+						</div>
+						<div style="width:29%;float:left;padding:2%">				
+							<b>第二步：</b><br><br>
+							<span>打开微信扫一扫功能</span><br><br>
+							<div>
+								<img src="../share/default-tpl/res/img/wechat3.png">
+							</div>
+						</div>
+						<div style="width:29%;float:left;padding:2%">				
+							<b>第三步：</b><br><br>
+							<span>关注微信公众号即可上网</span><br><br>
+							<div>
+								<img src="../share/default-tpl/res/img/wechat4.png">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div id="statement_account" class="statement uplayer">
+			<div class="inner">
+				<div><a id="hideStatement" href="#" onClick="hideWechatImg('account')" class="close">×</a></div>
+				<div class="statement-content">
+					<h1 style="text-align: center;">关注公众帐号</h1>
+					<div style="overflow:hidden;width:70%;margin:0 auto">
+						<div style="width:29%;float:left;padding:2%">				
+							<b>第一步：</b><br><br>
+							<span>搜索公众号或扫描公众号二维码</span><br><br>
+							<div>
+								<img src="../share/default-tpl/res/img/wechat5.png">
+							</div>
+						</div>
+						<div style="width:29%;float:left;padding:2%">				
+							<b>第二步：</b><br><br>
+							<span>关注公众号</span><br><br>
+							<div>
+								<img src="../share/default-tpl/res/img/wechat2.png">
+							</div>
+						</div>
+						<div style="width:29%;float:left;padding:2%">				
+							<b>第三步：</b><br><br>
+							<span>终端用户关注微信号后，点击【我要上网】或发送字母“w”即可免费上网</span><br><br>
+							<div>
+								<img src="../share/default-tpl/res/img/wechat6.png">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<!-- 免责声明条款 -->
+		<div id="statement" class="statement uplayer">
+			<div class="inner">
+				<div><a href="#" onClick="hideDisclaimer()" class="close">×</a></div>
+				<div class="statement-content">
+					﻿<h1 style="text-align: center;">温馨提示</h1><p> 尊敬的用户:</p><p>欢迎您使用新阳集团网络认证系统，现将有关注意事项温馨提示如下：</p><p>1、使用过程中，请注意自行甄别非法链接、钓鱼网站和其他诈骗信息，妥善保管个人信息，确保个人信息安全和财产安全，因此遭受的任何损失请自行承担；</p><p>2、使用过程中，请务必遵守国家相关法律法规和公共道德，勿发布、传播有违法律法规和社会公德的言论和信息，您所发布和传播的一切言论和信息由您自行担责；</p><p>3、请务必遵守集团信息安全管理规定，您访问的信息系统均有记录，运维部将按需不定时在集团公布统计报表，必要时您将承担集团管理规定及相应法律责任，</p><p>若您已正常连接上网络，意味着已仔细阅读并已接受上述提示内容。</p>
+
+
+
+
+
+
+
+
+
+
+
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
+<!--[if IE 6]>
+<script src="../share/res/js/DD_belatedPNG.js"></script>
+<script>
+  //IE6 PNG 透明度	
+  DD_belatedPNG.fix('.logo');
+</script>
+<![endif]--> 

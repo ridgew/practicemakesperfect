@@ -1,0 +1,391 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta id="viewport" name="viewport" content="width=device-width; initial-scale=0.9; maximum-scale=2.0; minimum-scale=0.9;">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="renderer" content="webkit">
+<title>上网认证系统</title>
+<link href="../share/default-tpl/res/main_new.css" rel="stylesheet" type="text/css" />
+<script language="javascript" src="../share/res/js/jquery-1.8.2.min.js"></script>
+
+<!-- 腾讯提供的生成二维码的库 -->
+<script language="javascript" src="../share/res/js/pcauth.js"></script>
+
+<script language="javascript" src="../share/res/js/logic_new.js"></script>
+<script language="javascript" src="../share/res/js/qrcode_new.js"></script>
+<script language="javascript" src="../share/res/js/ui-default-pc.js"></script>
+
+
+ 
+</head>
+<body style="background: #F4F9FD url(../share/default-tpl/res/img/pc_bg.png);">
+<div class="head">
+	<div class="logo">
+		<dl>
+			<dt><img class="logo" src="../share/default-tpl/res/img/logo_new.png" /></dt>
+		</dl>
+	</div>
+	<div class="tool">
+		<!--登录页工具栏-->
+		<ul id="login_tools" style="display:none"><li class="download"><a href="../../Dkeyauth.exe">下载Dkey客户端</a></li>
+		</ul>
+		<!--修改密码页工具栏-->
+		<ul id="changePwd_tools" style="display:none">
+			<li class="return"><a href="#" onClick="activatePage('frontLogin')">返回登录页面</a></li>
+		</ul>
+		<!--注销页面工具栏-->
+		<ul id="logout_tools" style="display:none">
+			<li id="flux_cx" class="white link-fluxcheck"><a href="#" id="flux"  target="_blank">查询流量信息</a>
+		</ul>
+	</div>
+</div>
+<div class="central"><br />
+	<!--登录页-->
+	<div id="mode_login">
+		
+		<div class="login">
+			<div id="tabsDiv" style = "float:left;height:100%;position:relative;width:130px;background:url('../share/default-tpl/res/img/firstTab.png');background-position: -20px -20px">
+				<ul id="tabsUl" style="margin: 105px 0 0 20px;width:70px">
+					
+				</ul>
+			</div>
+			<!--<div class="other_x"></div>-->
+			<!--短信认证登录区-->
+			<div class="login_body" id="mode_sms" style="display:none">
+				<!--标题-->
+				<div class="login_head">
+					<dl>
+						<!--<dt class="phone_ico"></dt>-->
+						<dd><span>短信认证</span>访客用户，输入您的手机号码获取临时上网密码</dd>
+					</dl>
+				</div>
+				<!--输入部分-->
+				<div class="login_operate">
+					<ul style="overflow:hidden">
+						<li class="phone li_press"><span></span>
+						<label class="txt_default" for="sms_name">手机号码</label>
+						<input id="sms_name" name="smsune" class="input focus" type="text" /></li>
+						<li class="login_btn sms_go"><input id="sms_getCodeBtn" onclick="return onGetSmsCode();" class="button" type="button" value="获取验证码"></li>
+						<li class="sms"><span></span>
+						<label class="txt_default" for="sms_pwd">输入收到的短信验证码</label>
+						<input id="sms_pwd" name="smspass" class="input" value="" type="text" /></li>
+					</ul>
+				</div>
+				<div class="rememberPwd">
+					<input type="checkbox" class="checkboxCls" id="rememberSms" />
+					<label for="rememberSms">记住登录状态</label>
+				</div>
+				<!--提示与反馈信息-->
+				<div class="login_box_msg"  style="display:none" >
+					<dl>
+						<dt></dt>
+						<dd>验证码已发送，请查收！</dd>
+					</dl>
+				</div>
+				<!--登录按钮-->
+				<div class="btn_ok">
+					<div class="login_btn login_btn_ok">
+						<input class="button" id="sms_submitBtn" onclick="onSmsLogin();" type="button" value="登录" >
+					</div>
+				</div>
+			</div>	
+			
+			<!--密码认证登录区-->
+			<div class="login_body" id="mode_password" style="display:none">
+				<!--标题-->
+				<div class="login_head">
+					<dl>
+						<!--<dt class="user_ico"></dt>-->
+						<dd><span>密码认证</span>内部员工，使用用户名密码方式登录</dd>
+					</dl>
+				</div>
+				<!--输入部分-->
+				<div class="login_operate">
+					<ul style="overflow:hidden">
+						<li class="username li_press"><span></span>
+							<label class="txt_default" for="password_name">用户名</label>
+							<input id="password_name" name="une"  class="input focus" type="text" />
+						</li>
+						<li class="password"><span></span>
+							<label class="txt_default" for="password_pwd">密码</label>
+							<input id="password_pwd" name="pass" class="input" type="password" />
+						</li>
+					</ul>
+				</div>
+				<div class="rememberPwd">
+					<a href="#" style="float:right;margin-right:65px;line-height:18px;" onclick="activatePage('changePwd')">修改密码</a>
+					<input type="checkbox" class="checkboxCls" id="rememberPwd" />
+					<label for="rememberPwd">记住登录状态</label>
+				</div>
+				
+				<!--提示与反馈信息-->
+				<div class="login_box_msg shiftKey" style="display: none;">
+					<dl>
+						<dt></dt>
+						<dd>大写锁定已打开</dd>
+					</dl>
+				</div>
+				<!--登录按钮-->
+				<div class="btn_ok">
+					<div class="login_btn login_btn_ok">
+						<input id="password_submitBtn" name="btlogin" class="button" onclick="onPwdLogin();" type="button" value="登录" tabindex="5">
+					</div>
+				</div>
+			</div>	
+			
+			<!--微信认证区-->
+			<div class="login_body" id="mode_wechat"  style="display:none">
+				<!--标题-->
+				<div class="login_head">
+					<dl>
+						<dd><span>微信认证</span>
+						可以通过以下方式进行认证
+						</dd>
+					</dl>
+				</div>
+				<!--输入部分-->
+				<div class="login_operate">
+					<div style="overflow:hidden;cursor:pointer" class="wechat_qrcode" onclick="showWechatImg('qrcode')">
+						<img src="../share/default-tpl/res/img/erweima.png" style="float:left;width:60px">
+						<div style="float:left;color:#666;font-size:12px;margin:5px 0 0 10px;line-height:20px"><div>微信扫描“二维码”</div><div>二维码海报通常张贴在可见处</div></div>
+					</div>
+					<div style="overflow:hidden;margin-top:30px;cursor:pointer" class="wechat_account" onclick="showWechatImg('account')">
+						<img src="../share/default-tpl/res/img/wechat.png" style="float:left;width:60px">
+						<div style="float:left;color:#666;font-size:12px;margin:5px 0 0 10px;line-height:20px"><div>通过关注公众号上网</div>{微信公众账号}</div>
+					</div>
+					<div style="overflow:hidden;margin-top:30px;cursor:pointer" class="wechat_wifi" onclick="showWechatImg('wifi')">
+						<img src="../share/default-tpl/res/img/erweima.png" style="float:left;width:60px">
+						<div style="float:left;color:#666;font-size:12px;margin:5px 0 0 10px;line-height:20px"><div>微信连Wi-Fi</div><div>{Wi-Fi SSID}</div></div>
+					</div>
+                    <div class="statement-content" style="position: relative;">
+                        <h1 style="text-align: center;">欢迎上网</h1>
+                        <div style="box-sizing:border-box;border:1px solid #e5e5e5;overflow:hidden;margin:0 auto;text-align:center;width:130px;height:130px;" id="qrcode_zone"></div>
+                        <h3 style="text-align: center;margin-top: 30px;font-size: 110%;font-weight: normal;">使用已通过认证的手机扫描二维码，以使PC通过认证</h3>
+                        <h5 style="text-align: center;margin-top:5px;font-weight: normal;">（若扫描无反应，请尝试手动刷新页面再去扫描）</h5>
+                    </div>
+				</div>
+			</div>
+			
+			<!--二维码认证区-->
+			<div class="login_body" id="mode_qrcode"  style="display:none">
+				<!--标题-->
+				<div class="login_head">
+					<dl>
+						<dd><span>二维码认证</span>使用已通过认证的手机扫描二维码，以使PC通过认证
+						</dd>
+					</dl>
+				</div>
+				<!--输入部分-->
+				<div class="login_operate">
+					<div id="qrcodeImg"></div>
+				</div>
+				<!--提示与反馈信息-->
+				<div class="login_box_msg shiftKey" style="display: none;overflow:hidden">
+					<dl>
+						<dt></dt>
+						<dd>大写锁定已打开</dd>
+					</dl>
+				</div>
+			</div>	
+			
+			<!--免认证上网区-->
+			<div class="login_body" id="mode_freeauth" style="display:none">
+				<!--标题-->
+				<div class="login_head">
+					<dl>
+						<dd><span>免认证上网</span>此认证方式，不需要重新认证。点击“立即上网”即可登录。</dd>
+					</dl>
+				</div>
+				<!--提示与反馈信息-->
+				<div class="login_box_msg"  style="display:none" >
+					<dl>
+						<dt></dt>
+						<dd>验证码已发送，请查收！</dd>
+					</dl>
+				</div>
+				<!--登录按钮-->
+				<div class="btn_ok">
+					<div class="login_btn login_btn_ok">
+						<input class="button" id="freeauth_submitBtn" onclick="onFreeauthLogin();" type="button" value="立即上网" >
+					</div>
+				</div>
+			</div>	
+				
+		</div>
+		
+	</div>
+	<!--注销页-->
+	<div class="login" id="mode_logout" style="display:none">
+		<div class="login_body">
+			<!--标题-->
+			<div class="login_head">
+				<dl>
+					<dt class="authresultmix_ico"></dt>
+					<dd><span>登录成功</span>用户：<b id="logout_name"></b>,您已通过上网认证！</dd>
+				</dl>
+			</div>
+			<br>
+			<!--提示与反馈信息-->
+			<div class="login_box_msg" style="display:none;margin-left:0" >
+				<dl>
+					<dt></dt>
+					<dd></dd>
+				</dl>
+				<br>
+			</div>
+			<!--注销按钮-->
+			<div class="btn_ok">
+				<div class="login_btn login_btn_ok">
+					<input id="logout_submitBtn" name="btlogin" class="button" onclick="onLogout();" type="button" value="注销" tabindex="5">
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<!--修改密码页-->
+	<div class="login" id="mode_changePwd" style="height:350px;display:none">
+		<div class="login_body" style="padding-top: 0px;">
+			<!--标题-->
+			<div class="login_head">
+				<dl>
+					<dt class="user_ico"></dt>
+					<dd>
+						<span>修改密码</span>
+							<div id="changePwd_first"></div>
+					</dd>
+				</dl>
+			</div>
+			<!--输入部分-->
+			<div class="login_operate" style="height:auto">
+				<ul style="overflow:hidden">
+					<li class="username li_press"><span></span>
+						<label class="txt_default" for="changePwd_name">用户名</label>
+						<input name="m_username" id="changePwd_name" type="text" class="input" />
+					</li>
+					<li class="password"><span></span>
+						<label class="txt_default" for="changePwd_oldPwd">输入旧密码</label>
+						<input id="changePwd_oldPwd" name="m_userpass" type="password" class="input" />
+					</li>
+					<li class="password_new"><span></span>
+						<label class="txt_default" for="changePwd_newPwd">输入新密码</label>
+						<input id="changePwd_newPwd" name="m_userpassnew" type="password" class="input" />
+					</li>
+					<li class="password_n"><span></span>
+						<label class="txt_default" for="changePwd_newPwd2">再次输入</label>
+						<input id="changePwd_newPwd2" name="m_userpassnew1" type="password" class="input" />
+					</li>
+				</ul>
+			</div>
+			<!--提示与反馈信息-->
+			<div class="login_box_msg shiftKey" style="display: none;">
+				<dl>
+					<dt></dt>
+					<dd>大写锁定已打开</dd>
+				</dl>
+			</div>
+			<!--登录按钮-->
+			<div class="btn_ok">
+				<div class="login_btn login_btn_ok">
+					<input id="changePwd_submitBtn" type="button" class="button" onclick="onChangePwd()" value="确定" />
+				</div>
+			</div>
+		</div>
+		<!---->
+	</div>
+</div>
+
+
+<!--<div class="bottom"><span></span></div>
+<div class="central_bg"></div>-->
+<div class="view_mask" id="view_mask" style="position:absolute;display:none;top:0px;width:100%;height:100%;z-index:100;background-color:#000;opacity:0.5">
+	
+</div>
+<div id="statement_qrcode" class="statement uplayer">
+	<div class="inner">
+		<div><a href="#" onClick="hideWechatImg('qrcode')" class="close">×</a></div>
+		<div class="statement-content">
+			<h1 style="text-align: center;">二维码扫描</h1>
+			<div style="overflow:hidden;width:70%;margin:0 auto">
+				<div style="width:29%;float:left;padding:2%">				
+					<b>第一步：</b><br><br>
+					<span>寻找张贴有“我要上网”的二维码海报</span><br><br>
+					<div>
+						<img src="../share/default-tpl/res/img/wechat1.png">
+					</div>
+				</div>
+				<div style="width:29%;float:left;padding:2%">				
+					<b>第二步：</b><br><br>
+					<span>打开微信扫一扫功能</span><br><br>
+					<div>
+						<img src="../share/default-tpl/res/img/wechat3.png">
+					</div>
+				</div>
+				<div style="width:29%;float:left;padding:2%">				
+					<b>第三步：</b><br><br>
+					<span>关注微信公众号即可上网</span><br><br>
+					<div>
+						<img src="../share/default-tpl/res/img/wechat4.png">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="statement_account" class="statement uplayer">
+	<div class="inner">
+		<div><a href="#" onClick="hideWechatImg('account')" class="close">×</a></div>
+		<div class="statement-content">
+			<h1 style="text-align: center;">关注公众帐号</h1>
+			<div style="overflow:hidden;width:70%;margin:0 auto">
+				<div style="width:29%;float:left;padding:2%">				
+					<b>第一步：</b><br><br>
+					<span>搜索公众号或扫描公众号二维码</span><br><br>
+					<div>
+						<img src="../share/default-tpl/res/img/wechat5.png">
+					</div>
+				</div>
+				<div style="width:29%;float:left;padding:2%">				
+					<b>第二步：</b><br><br>
+					<span>关注公众号</span><br><br>
+					<div>
+						<img src="../share/default-tpl/res/img/wechat2.png">
+					</div>
+				</div>
+				<div style="width:29%;float:left;padding:2%">				
+					<b>第三步：</b><br><br>
+					<span>终端用户关注微信号后，点击【我要上网】或发送字母“w”即可免费上网</span><br><br>
+					<div>
+						<img src="../share/default-tpl/res/img/wechat6.png">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- 微信连wifi的弹出框 -->
+<!--<div id="statement_wifi" class="statement uplayer">
+	<div class="inner">
+		<div><a href="#" onClick="hideWechatImg('wifi')" class="close">×</a></div>
+		<div class="statement-content" style="position: relative;">
+			<h1 style="text-align: center;">欢迎使用免费Wi-Fi</h1>
+			<div style="box-sizing:border-box;padding:4px;border:1px solid #e5e5e5;overflow:hidden;margin:0 auto;text-align:center;width:250px;height:250px;" id="qrcode_zone"></div>
+			<h3 style="text-align: center;margin-top: 30px;font-size: 150%;font-weight: normal;">请使用微信扫一扫扫描二维码</h3>
+		</div>
+	</div>
+</div>-->
+<!--[if IE 6]>
+<script src="../share/res/js/DD_belatedPNG.js"></script>
+<script>
+  //IE6 PNG 透明度	
+  //DD_belatedPNG.fix('.login_operate ul li, .login_operate ul li span, .login_btn_ok, .login_btn_other, .login_head dt, .login_box_msg dt, .head .tool ul li, .central_bg, .other_x,.logo');
+  $(document).ready(function(){
+	DD_belatedPNG.fix('.login_operate ul li, .login_operate ul li span, .login_btn_ok, .login_btn_other, .login_head dt, .head .tool ul li, .central_bg, .other_x,.logo');
+  });
+</script>
+<![endif]--> 
+</body>
+</html>
+
