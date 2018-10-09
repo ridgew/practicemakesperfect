@@ -1,0 +1,21 @@
+﻿﻿<?xml version="1.0" encoding="utf-8"?>
+<AnyMatch type="System.Diagnostics.Trace, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" enumerator="$Arr" target="ScopeResult">
+  <match>
+    <InstanceIsTypeConditionItem Logic="None" key="$StepSwap" cmpType="string" type="XmlClrLan.InstanceIsTypeConditionItem, XmlClrLan" />
+    <StringConditionItem boolDelegate="XmlClrLan.ConditionalElement.StringNotEqual" logic="AND" mode="InvariantCultureIgnoreCase" type="XmlClrLan.StringConditionItem, XmlClrLan">
+      <left type="XmlClrLan.StringExpressItem, XmlClrLan">
+        <string value="3" />
+      </left>
+      <right type="XmlClrLan.StringExpressItem, XmlClrLan">
+        <string value="$StepSwap" />
+      </right>
+    </StringConditionItem>
+  </match>
+  <invoke type="XmlClrLan.ModuleBuildStepElement, XmlClrLan">
+    <Call fun="WriteLine">
+      <arg>
+        <param type="System.String" value="$StepSwap" />
+      </arg>
+    </Call>
+  </invoke>
+</AnyMatch>

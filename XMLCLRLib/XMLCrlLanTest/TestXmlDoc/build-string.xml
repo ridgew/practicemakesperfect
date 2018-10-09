@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<StepBasedExpressionItemOfString>
+  <Builder moduleId="" type="XMLCrlLanTest.ClientDBobj, XMLCrlLanTest" isInstance="False" target="ScopeResult">
+    <Call fun="GetParamValue">
+      <arg>
+        <param type="string" value="KQ043001" />
+        <param type="bool" value="False" />
+      </arg>
+    </Call>
+    <Call fun="ToText">
+      <arg>
+        <param type="object" value="1" />
+      </arg>
+    </Call>
+  </Builder>
+</StepBasedExpressionItemOfString>

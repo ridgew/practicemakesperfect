@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ConditionalElement Executable="True">
+  <StringConditionItem logic="None" mode="CurrentCulture" type="XmlClrLan.StringConditionItem, XmlClrLan">
+    <left type="XmlClrLan.StepBasedExpressionItem&lt;string&gt;, XmlClrLan">
+      <StepBasedExpressionItemOfString>
+        <Builder type="XMLCrlLanTest.ClientDBobj, XMLCrlLanTest" isInstance="False" target="ScopeResult">
+          <Call fun="GetParamValue">
+            <arg>
+              <param type="string" value="KQ043001" />
+              <param type="bool" value="False" />
+            </arg>
+          </Call>
+          <Call fun="ToText">
+            <arg>
+              <param type="object" value="1" />
+            </arg>
+          </Call>
+        </Builder>
+      </StepBasedExpressionItemOfString>
+    </left>
+    <right type="XmlClrLan.StepBasedExpressionItem&lt;string&gt;, XmlClrLan">
+      <StringExpressItem value="1" />
+    </right>
+  </StringConditionItem>
+</ConditionalElement>
+
+<?xml version="1.0" encoding="utf-8"?>
+<Call fun="GetParamValue">
+  <arg>
+    <param type="string" value="KQ043001" />
+    <param type="bool" value="False" />
+  </arg>
+</Call>

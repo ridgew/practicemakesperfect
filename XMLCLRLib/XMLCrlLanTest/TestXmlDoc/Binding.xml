@@ -1,0 +1,4 @@
+?<?xml version="1.0" encoding="utf-8"?>
+<Binding name="ActionTest" flags="Static|Public|SetField">
+	<ValueType type="System.Action&lt;System.String, System.String&gt;" value="DBHR.WinFormUnity.SPRun.TestMethod2, DBHR.WinFormUnity" />
+</Binding>

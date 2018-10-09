@@ -1,0 +1,54 @@
+﻿<?xml  version="1.0" encoding="utf-8"?>
+<Builder moduleId="KQ0430" type="DBHR.ClientModule.BaseEditCalenderForm, DBHR.ClientModule" isInstance="True" target="Instance">
+  <Case moduleId="KQ0430" type="XmlClrLan.ModuleBranch, XmlClrLan" target="ScopeResult">
+    <when>
+      <match>
+        <StringConditionItem boolDelegate="XmlClrLan.ConditionalElement.StringNotEqual, XmlClrLan" logic="None" mode="InvariantCultureIgnoreCase" type="XmlClrLan.StringConditionItem, XmlClrLan">
+          <left type="XmlClrLan.StepBasedExpressionItem&lt;string&gt;, XmlClrLan">
+            <StepBasedExpressionItemOfString>
+              <Builder type="XMLCrlLanTest.ClientDBobj, XMLCrlLanTest" target="ScopeResult">
+                <Call fun="GetParamValue">
+                  <arg>
+                    <param type="string" value="KQ043001" />
+                    <param type="bool" value="False" />
+                  </arg>
+                </Call>
+                <Call fun="ToText">
+                  <arg>
+                    <param type="object" value="$lastStep" />
+                  </arg>
+                </Call>
+              </Builder>
+            </StepBasedExpressionItemOfString>
+          </left>
+          <right type="XmlClrLan.StringExpressItem, XmlClrLan">
+            <string value="1" />
+          </right>
+        </StringConditionItem>
+      </match>
+      <invoke type="XmlClrLan.ModuleBuildStepElement, XmlClrLan">
+        <Call fun="AddMainType">
+          <arg>
+            <param type="System.Type" value="DBHR.WinFormUnity.TestModule2, DBHR.WinFormUnity" />
+          </arg>
+        </Call>
+      </invoke>
+    </when>
+    <else type="XmlClrLan.ModuleBuildStepElement, XmlClrLan" target="ScopeResult">
+      <Call fun="AddDetailType">
+        <arg>
+          <param type="System.Type" value="DBHR.WinFormUnity.TestModule1, DBHR.WinFormUnity" />
+          <param type="System.Type" value="DBHR.WinFormUnity.TestModule2, DBHR.WinFormUnity" />
+        </arg>
+      </Call>
+    </else>
+  </Case>
+  <Call fun="SetCalenderObjType">
+    <arg>
+      <param type="System.Type" value="DBHR.WinFormUnity.TestModule1, DBHR.WinFormUnity" />
+    </arg>
+  </Call>
+  <Call fun="DoCreateFormControls" />
+  <Set name="MdiParent" value="$mainForm" flags="Default" />
+  <Call fun="Show" />
+</Builder>

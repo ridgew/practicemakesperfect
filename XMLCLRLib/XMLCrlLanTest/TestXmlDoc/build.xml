@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClientModuleContainer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Module name="SP" type="DBHR.ClientModule.StartUpModule, DBHR.ClientModule">
+    <Build moduleId="SP1010" type="DBHR.ClientModule.BaseEditForm, DBHR.ClientModule">
+      <Call fun="AddMainType">
+        <arg>
+          <param type="System.Type" value="DBHR.WinFormUnity.TestModule1, DBHR.WinFormUnity" />
+        </arg>
+      </Call>
+      <Call fun="AddMainType">
+        <arg>
+          <param type="System.Type" value="DBHR.WinFormUnity.TestModule2, DBHR.WinFormUnity" />
+        </arg>
+      </Call>
+      <Call fun="AddDetailType">
+        <arg>
+          <param type="System.Type" value="DBHR.WinFormUnity.TestModule1, DBHR.WinFormUnity" />
+          <param type="System.Type" value="DBHR.WinFormUnity.TestModule2, DBHR.WinFormUnity" />
+        </arg>
+      </Call>
+      <Call fun="DoCreateFormControls" />
+      <Set name="MdiParent" value="$mainForm" />
+      <Call fun="Show" />
+    </Build>
+  </Module>
+</ClientModuleContainer>

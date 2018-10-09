@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{6F0FC1C3-B03B-4851-9C9B-5A168A95662A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>XmlClrLan</RootNamespace>
+    <AssemblyName>XmlClrLan</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Container\Config\ExpressionReturnElement.cs" />
+    <Compile Include="Container\Config\IndirectTypeValueElement.cs" />
+    <Compile Include="Container\Config\InstanceMethodGetElement.cs" />
+    <Compile Include="Container\Lan\InstanceIsTypeConditionItem.cs" />
+    <Compile Include="Module\IModuleBuilder.cs" />
+    <Compile Include="Module\ModuleAnyMatch.cs" />
+    <Compile Include="Module\ModuleBlock.cs" />
+    <Compile Include="Module\ModuleBranch.cs" />
+    <Compile Include="Module\ModuleDoWhile.cs" />
+    <Compile Include="Module\ModuleWhen.cs" />
+    <Compile Include="Module\ScopeItem.cs" />
+    <Compile Include="Module\BuildTarget.cs" />
+    <Compile Include="Container\Config\ClientModuleElement.cs" />
+    <Compile Include="Container\Config\ModuleBuildStepElement.cs" />
+    <Compile Include="Container\Config\ModuleConstructorElement.cs" />
+    <Compile Include="Container\Config\ModuleFieldElement.cs" />
+    <Compile Include="Container\Config\ModuleMethodCallElement.cs" />
+    <Compile Include="Container\Config\ModulePropertyElement.cs" />
+    <Compile Include="Container\Config\SubModuleBuildElement.cs" />
+    <Compile Include="Container\Config\TypeValueElement.cs" />
+    <Compile Include="Container\Config\ContainerConfiguration.cs" />
+    <Compile Include="Container\Lan\BooleanConditionalItem.cs" />
+    <Compile Include="Container\Lan\ConditionalElement.cs" />
+    <Compile Include="Container\Lan\TryCatchFinallyElement.cs" />
+    <Compile Include="Container\Lan\IExpressionItem.cs" />
+    <Compile Include="Container\Lan\StepBasedExpressionItem.cs" />
+    <Compile Include="Container\Lan\StringConditionItem.cs" />
+    <Compile Include="Container\Lan\StringExpressItem.cs" />
+    <Compile Include="Container\Lan\VoidExpressionItem.cs" />
+    <Compile Include="Module\ModuleBuilder.cs" />
+    <Compile Include="Module\ModuleRunScope.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Util\ReflectUtil.cs" />
+    <Compile Include="Util\SerializeEx.cs" />
+    <Compile Include="Util\TypeCache.cs" />
+    <Compile Include="Util\XmlSerializeSectionHandler.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Emebed\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

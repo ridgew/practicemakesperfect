@@ -1,0 +1,5 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<IndirectTypeValue type="XMLCrlLanTest.TestClass, XMLCrlLanTest" value="FuncString" staticField="True">
+  <Call fun="Instance" staticType="XMLCrlLanTest.TestClass2, XMLCrlLanTest" />
+  <InstanceMethod typedef="XMLCrlLanTest.TestClass+MyFuncString, XMLCrlLanTest" fun="TestDelegate" origin="Context" />
+</IndirectTypeValue>
