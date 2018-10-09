@@ -1,0 +1,240 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<!---------------------------------------------------------------------------><!--                           INTRODUCTION                                
+
+
+
+ The Code Project article submission template (HTML version)
+
+
+
+Using this template will help us post your article sooner. To use, just 
+
+follow the 3 easy steps below:
+
+ 
+
+     1. Fill in the article description details
+
+     2. Add links to your images and downloads
+
+     3. Include the main article text
+
+
+
+That's all there is to it! All formatting will be done by our submission
+
+scripts and style sheets. 
+
+
+
+--><!---------------------------------------------------------------------------><!--                        IGNORE THIS SECTION                            -->
+  <title>The Code Project</title>
+  <style>
+BODY, P, TD { font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 10pt }
+H2,H3,H4,H5 { color: #ff9900; font-weight: bold; }
+H2 { font-size: 13pt; }
+H3 { font-size: 12pt; }
+H4 { font-size: 10pt; color: black; }
+PRE { BACKGROUND-COLOR: #FBEDBB; FONT-FAMILY: "Courier New", Courier, mono; WHITE-SPACE: pre; }
+CODE { COLOR: #990000; FONT-FAMILY: "Courier New", Courier, mono; }
+  </style>
+  <link href="http://www.codeproject.com/styles/global.css"
+ type="text/css" rel="stylesheet">
+</head>
+<body color="#000000" style="background-color: rgb(255, 255, 255);">
+<!---------------------------------------------------------------------------><!-------------------------------     STEP 1      --------------------------->
+<!--  Fill in the details (CodeProject will reformat this section for you) -->
+<pre>Title:       A Simple protocol to view aspx pages without IIS implemented in C#<br>Author:      Andy Brummer<br>Email:       Andy@BrummerFamily.com<br>Environment: VS.net 2003, .Net 1.1, IE<br>Keywords:    IInternetProtocol, hosting ASP.NET, COM interop, Shell Extension, IContextHandler<br>Level:       Intermediate<br>Description: Covers how to write a Pluggable Asyncrhonous Protocol using C# and provides a useful protocol to enable local
+execution of ASP.net sites.<br>Section      C#, ASP.net<br>SubSection   General<br></pre>
+<!-------------------------------     STEP 2      --------------------------->
+<!--  Include download and sample image information.                       -->
+<ul class="download">
+  <li><a href="protocol_demo.zip">Download demo project - 14 Kb </a></li>
+  <li><a href="protocol_src.zip">Download source - XXX Kb</a></li>
+</ul>
+<p><img src="IESample.gif" 
+ alt="aspx IE Sample" width="336" height="243" border="0"></p>
+<!-------------------------------     STEP 3      --------------------------->
+<!--  Add the article text. Please use simple formatting (<h2>, <p> etc)   -->
+<h2>Introduction</h2>
+<p>Ever since I started working with asp pages, I've always wanted to be able to test them simply from the file system without having to configure IIS or setup a virtual directory. Especially when downloading and looking at sample code from sites like CodeProject. While working on an application for web based acceptence testing, I discovered how to make it happen. First, ASP.net lets you host the runtime outside of IIS. Second, Microsoft provies the Asyncronous Pluggable Protocol interfaces to create custom protocols for IE. I just needed to hook a custom protocol up to an instance of the ASP.Net runtime and everything would work great. My final solution came out pretty close to that, but there were quite a few problems I had to work through along the way.</p>
+<p>I've included two protocols, echo: and aspx:. The echo protocol just echos the url line as html text. This is the test protocol I wrote just to make sure I got the headers right. Aspx will run any aspx page locally and load the result in IE. It supports most headers and postback but doesn't support cookies just yet. I've added a shell extension as well that lets you just right click on any aspx file and execute it using the aspx protocol. </p>
+<h2>Using the code</h2>
+<p>You can use the protocol anywhere you would use a regular protocol, such as the run line or linking from the browser. The aspx protocol should let you test, develop and distrubute your web applications without having to install a web server of any kind. <br> 
+  Since I wrote 2 protocols I factored out the registration and base buffer code into a base class, and some attributes. If you want to experiment with your own protocols, all you need to do is assign an attribute to your class, override the start method and derive from BaseProtocol. You can also use the ContextHandlerAttribute to register any ShellExtensions you write. </p>
+<h3>Registration</h3>
+<p>Since protocol is a com component that has to be able to be loaded from any directory, it needs to be registered in the gac or setup with DEVPATH, as well as registered with regasm. I've included a register.cmd file to register the component. If you have problems then most likely your .net install is not in the default location. </p>
+<p>If you want to compile the code and install that way, first register it in the gac or use the the DEVPATH variable, which is easier once you have it setup. Using fuslogvw.exe was essential in getting DEVPATH configured. One note: You need to include the trailing \ in the directory that you put in DEVPATH, since the last character is trimmed off no matter what it is. Then you must run regasm on the component. The component handles it's registration and all the additional registry keys to setup the protocol and shell extensions required. <br>
+</p>
+<h3>The Interface</h3>
+<p>IInternetProtocol derives from IInternetProtocolRoot.&nbsp;
+IInternetProtocolRoot covers methods required to start and stop
+downloading content.&nbsp; The 4 methods that <code>IInternetProtocol</code>
+adds
+all deal with getting the results of the download.&nbsp; All the
+methods are required to implement an asynchronous download and handle
+situations like user aborts, pausing and resuming downlods.&nbsp;
+Fortunately we can get away with doing a syncronous download.&nbsp;
+After much trial and error I determined that I only needed to implement
+3 methods to get this simple protocol working.</p>
+<p>First the Start method is called with the full address string is
+passed in including the inital protocol string.&nbsp; This tells us to
+begin downloading and gives us two interfaces.&nbsp; One to notify IE
+with and the other to get additional information about the request
+from.&nbsp; Since we are just implementing a simple protocol, all we
+need is the url and we can focus on the first interface.&nbsp; We need
+to do a minimum of 2 things here, prepare our data and then send
+notification that the data is ready to read.&nbsp; We prepare the data
+by creating a writer, writing to the data stream and flushing the
+writer like this.<br>
+</p>
+<pre><title>{1}</title>		public void WriteBasicMessage(string Message, string Title)<br>		{<br>			StreamWriter Writer = new StreamWriter(Stream); <br>			Writer.Write("{0}", Message, Title);<br>			Writer.Flush();<br>			Stream.Position = 0;<br>		}<br></pre>
+To notify IE, we need to call 2 methods on <code>IInternetProtocolSink</code>
+the first is ReportData, passing in the last notification code and the
+number of bytes in our stream. WARNING: The documentation states the
+you just
+need to pass in a number that tells how far the download has
+progressed. When I
+passed in a value of 100, thinking using percent would be just fine,
+there were
+errors for large file downloads. I didn't figure out the problem until
+I wrote my own UrlMon client and saw that it was returning the file
+size to this method. When
+I gave that a try, everything magically started working. The second
+method is
+ReportResult. I just pass in S_OK and 200 for OK and that works fine.<br>
+<br>
+Now we come to the second gotcha when dealing with these interfaces.
+The documentation states that the calls to read should be bracketed by
+calls to Lock and
+Unlock, but you might get some calls to read after Unlock. Well, it is
+also likely that you
+will get calls to Read before calls to Lock. What does this mean to us
+component writers.
+We need to initalize our buffer in the Start method before we call
+ReportData instead of
+flushing everything in the Lock method, which seems more natural. With
+that out of the way, Read is a pretty simple method to implement as
+long as we use a .net stream to store our data in and
+use a byte[] array to do the transfer. My first implementation used a
+StringWriter base on a stringBuilder, which worked alright
+until I ran into encoding issues. Switching to a MemoryStream and
+creating the proper Writer objects
+for each case turned out to be the right move.<br>
+<br>
+This worked except that IE was interpreting the output as a text file
+and not taking any of the html formating into account. I needed to send
+the encoding
+headers to the client so it would know this is html text. To do that, I
+had to
+access yet another couple of interfaces. First, we needed to call <code>IServiceProvider</code>
+which is a standard interface for getting lazy initalized objects from
+an interface. Then we just query for the <code>IHttpNegotiate</code>
+interface. This lets us do 2 things, get request
+headers from the client and send response headers back. For our simple
+echo protocol, we just need to send some basic headers. They look like
+this.
+<pre>HTTP/1.1 200 OK<br>Content-Type: text/html; charset=utf-8<br>Content-Length:234<br><br></pre>
+The Content_Type: text/html; header tells the client that we are
+sending back html content and the content
+length tells it how much we are sending back. If it seems like quite a
+bit of work just to write
+out a couple of lines of html in the browser, that's because it is.
+However, it is setting us up
+for the cool part. Running ASP.NET locally without using a web server.
+<h3>ASPXProtocol</h3>
+<br>
+  Hosting ASP.NET outside of IIS, is the most well documented part of
+  this project. A very good example is Cassini, the open source webserver
+  used with asp matrix. Since there are plenty of good articles
+  out there I'm just going to provide a short overview. There are two
+  steps to hosting ASP.net. Initializing
+  the runtime and sending requests to it. For security, ASP.Net loads up
+  in seperate <code>AppDomains</code>. This prevents code from one site
+  getting access to another site without special permissions. However, it
+  makes things more complicated for us since we need to send requests
+  from our Domain to the ASP.Net domain.
+  To make this easier the System.Web.Hosting namespace contains the <code>ApplicationHost.CreateApplicationHost</code>
+  method. This creates a host object for us and returns a proxy reference
+  to us. This can be pretty confusing the first time you encounter it,
+  but it makes perfect sense once you get used to it. Trust me. Once we
+  have a copy of the host object, what good is it? The host object acts
+  as our gateway to the ASP.Net runtime, so we need to give it some
+  useful functionality. We just need to give it a simple method, I
+  decided
+  to call mine SendRequest. It just turns around and calls the <code>HttpRuntime.ProcessRequest</code>
+  method. This
+  loads up the runtime, processes the request and sends the response
+back.<br>
+<br> 
+One of the dificulties in intializing the runtime is that we need to find the location of the root directory of the site and the virtual directory. Normally this information is maintained by IIS. In our case we don't have any of this information and need to search for the root of the site. A simple method works for most cases. First we iterate back to the root of the file system. If we find a global.asax file we can be pretty sure that we have found the root of the containing site for the page. If we don't find a global.asax file then we use the lowest directory that contains a web.config. If that fails, then the lowest directory that contains an aspx page is used. This works for nearly all the sites, except for virtual directories without an asax file. I plan on adding a configuration site to the object that lets these be configured if need be. <br>
+<br>
+  The System.Web.Hosting namespace contains the <code>SimpleWorkerRequest</code> class to handle basic requests. This
+      does not include POST or header data, so I had to use a derived class
+      to handle these. Also, I got errors if I created
+      it outside of the ASP.Net AppDomain, so I had to create a simple data
+      class that I passed into the SendRequest method. After that, I just
+      matched up some overrides to the data class and everyting ran great.
+      There was just one hitch. SimpleWorkerRequest uses a TextWriter to
+      output the content. This worked fine for simple text, and outputing
+      directly
+      to a file, but if the content was an image this caused problems.
+      TextWriter does encoding and decoding on write. Since
+      I'm streaming directly to IE, which does it's own decoding, this caused
+      the stream to be encoded twice. I overrode a copule more methods and
+      swapped in a BinaryWriter and everything came through including gif and
+      jpeg images. I lucked
+      out with this shortcut, since I can just load the image files by having
+      ASP.Net process the images just like aspx pages.
+      I need to load those directly for a more robust solution.<br>
+  Now that I have the hosting working I just tied that in with the
+protocol code that I wrote for the <code>echoProtocol</code> And everyting was working fine. I could load up an aspx page locally
+      with just a link like aspx:c:\test\test.aspx. However links from the
+page were broken and POST didn't work. 
+<h3>Fixing the links and IInternetProtocolInfo</h3>
+The problem with the links is that without any additional information, IE will just append the links from
+the page onto the current url of the page.  If we are on aspx:c:/test/test.aspx and have a link to
+aspx:c:/test/test2.aspx it will be interpreted as aspx:c:/test/test.aspxaspx:c:/test/test2.aspx.  Each
+protocol has it's own way of combining URLs.  Fortunately, the IInternetProtocolInfo interface gives us 
+a way to tell the client how to combine these Urls.  There are 3 main types of links that we need to parse.
+Fully qualified links need to be processed as is without including the current page.&nbsp;&nbsp;Links beginning with / need to map to the root of the site that we are running in.  And local links need to map starting at the current directory.  The implementation of IInternetProtocolInfo gives a good minimal implementation of the interface <a href="http://support.microsoft.com/default.aspx?scid=kb;en-us;260528">DB2XML Implements Pluggable Protocol Handler</a><h3>POST data and IInternetBindInfo</h3>
+<p>  Getting this to work was a matter of setting up the COM plumbing with the Marshal object, and finding this KB
+  article.
+    <a href="http://support.microsoft.com/default.aspx?scid=kb;en-us;280522">HOWTO: Handle POST Requests in a Pluggable Protocol Handler</a> Following the instructions in this article led to the following implementation<br>
+<pre>
+		public byte[] GetPostData(BINDINFO BindInfo)
+		{
+			if (BindInfo.dwBindVerb != BINDVERB.BINDVERB_POST)
+				return new byte[0];
+			byte[] result = new byte[0];
+			if (BindInfo.stgmedData.enumType == TYMED.TYMED_HGLOBAL)
+			{
+				UInt32 length = BindInfo.cbStgmedData;
+				result = new byte[length];
+
+				Marshal.Copy(BindInfo.stgmedData.u, result, 0, (int)length);
+				if (BindInfo.stgmedData.pUnkForRelease == null)
+					Marshal.FreeHGlobal(BindInfo.stgmedData.u);
+			}
+			return result;
+		}</pre>
+	<h2>Browsing for files </h2>
+<p>In order to make things easier, I've added a simple function that runs the url through the System.IO.Directory.Exists method. If it is a directory then the protocol returns a simple list of the parent and subdirectories as well as the local files. This makes it easier to find specific files. </p>
+<h2>COM Registraion</h2>
+<p>Registering the protocol requried adding a few extra registry keys. This can be accomplished by adding a couple of static methods to each exported .net object and making them with attributes. Since I implemented a couple of objects, I refactored this into a base class and created a simple attribute to feed the specific information back from the derived class to the base during registration. </p>
+<h2>Shell intergration</h2>
+<p>Adding a few registry keys would have been enough for most registrations, pointing at c:\program files\ineternet explorer\iexplore.exe. However, I wanted to do something a little more robust. This requires another object this time implementing IContextMenu and IShellExtInit. This was pretty simple I just lookup the mapping for http to send the request to the same application registered for that. The .net framework samples provide a decent example of implementing IContextMenu.</p>
+<h3>Implementing in .net</h3>
+<p>Without a doubt the most tedious part of this project has been getting the COM Interop to work correctly. Interop has a number of tools that make accessing any component with a typelib easy. I initialy tried to generate a type library from the IDL for these interfaces, and import these in with tlbimp.exe. I had a number of problems with these imports and ended up implementing the interfaces by hand. This article described the technique that helped me out the most. <br>
+However working with low level interfaces that require direct memory access has a high learning curve with little documentation to help. I would have been totally lost without the years I devoted to learning IDL and doing COM under C++. It wasn't a lot of fun having to learn a completely new syntax to express basic IDL constructs. However I was plesantly suprised that the CLR COM interop was able to handle all the interfaces I threw at it. I really only expected interop to work as well as VB6.</p>
+<h2>Future Enhancements </h2>
+<p>There are a few loose ends that I'm currently working on when I have time. First I'm working on an html based configuration site so that you can configure virtual domains like aspx:www.mydomain.com/ to map to directories on your hard drive. Second, I need to figure out how to get cookies working. Either I need to get IE to handle them, or implement them myself. I think it is the protocols' responsibility, but I'm not sure. Also, I currently don't add any additional header information to responses like mime type or create date, etc. It would be good to add that for the future. </p>
+<h2>References</h2>
+<p>This excelent control started this project off. <a href="http://www.itwriting.com/htmleditor/index.php">HTML Editor</a> </p>
+<p>I've been working on a unit/acceptance testing application for the web development that I've been doing recently. I had a version working that automates IE, except the application kept losing control of IE and didn't have enough low level control of the networking. I've written a version using the WebBrowser control and one using the HtmlEditor control and the HtmlEditor control has by far been the most stable. However, it doesn't give any http status notifications on error. I wrote this protocol to figure more about what is going on under the covers with MSHTML and UrlMon. I also plan to use it for some phases of automated testing because it lets me gain access to the internals of the ASP.Net process during page execution and between page execution. This is important to make sure that all my pages handle lost session, cache and other catastrophic events correctly. </p>
+<h2>History</h2>
+<p>First Version. <!-------------------------------    That's it!   ---------------------------></p>
+</body>
+</html>
