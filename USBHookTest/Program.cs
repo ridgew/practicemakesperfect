@@ -13,8 +13,8 @@ namespace USBHookTes
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            //Application.Run(new Form1());
-            Application.Run(new MultiFormApplictionStart(typeof(WinForm_Scaner.Scaner), typeof(Form1), typeof(COM_TEST.COMForm)));
+            //Application.Run(new USBKeyboard());
+            Application.Run(new MultiFormApplictionStart(typeof(WinForm_Scaner.Scaner), typeof(USBKeyboard), typeof(COM_TEST.COMForm)));
         }
     }
 }

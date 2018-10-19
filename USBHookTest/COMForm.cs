@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO.Ports;
 using System.Text;
 using System.Windows.Forms;
 
@@ -49,7 +50,13 @@ namespace COM_TEST
                 this.button_Test.Text = "正在测试……";
 
                 //注册一该串口
-                commBar.SerialPortValue(this.comboBox_Com.Text, Convert.ToInt32(this.comboBox_comPl.Text));
+                commBar.SerialPortValue(this.comboBox_Com.Text,
+                     Convert.ToInt32(this.comboBox_comPl.Text),
+                     Convert.ToInt32(cbxDataBits.Text.Trim()),
+                    (StopBits)Enum.Parse(typeof(StopBits), cbxStopBits.Text.Trim()),
+                    (Parity)Enum.Parse(typeof(Parity), cbxParity.Text.Trim()),
+                    (Handshake)Enum.Parse(typeof(Parity), cbxHandShaking.Text.Trim())
+                    );
                 //打开串口
                 if (commBar.Open())
                     //关联事件处理程序
@@ -118,6 +125,11 @@ namespace COM_TEST
         {
             if (cbxCard12.Checked)
                 comboBox_comPl.SelectedItem = "9600";
+        }
+
+        private void comboBox4_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 

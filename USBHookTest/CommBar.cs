@@ -36,14 +36,27 @@ namespace COM_TEST
             {
                 Close();
             }
-            serialPort.Open();
+
+            bool isError = false;
+            string errMsg = null;
+            try
+            {
+                serialPort.Open();
+            }
+            catch (Exception ex)
+            {
+                isError = true;
+                errMsg = ex.Message;
+            }
+
             if (serialPort.IsOpen)
             {
                 return true;
             }
             else
             {
-                MessageBox.Show("串口打开失败！");
+                if (isError)
+                    MessageBox.Show("串口打开失败！" + errMsg);
                 return false;
             }
         }
@@ -79,25 +92,25 @@ namespace COM_TEST
         }
 
         //注册一个串口
-        public void SerialPortValue(string portName, int baudRate)
+        public void SerialPortValue(string portName, int baudRate,
+            int dataBit = 8, StopBits sBit = StopBits.None,
+            Parity parity = Parity.None, Handshake hShake = Handshake.None)
         {
             //串口名
             serialPort.PortName = portName;
             //波特率
             serialPort.BaudRate = baudRate;
             //数据位
-            serialPort.DataBits = 8;
+            serialPort.DataBits = dataBit;
             //两个停止位
-            serialPort.StopBits = System.IO.Ports.StopBits.One;
+            serialPort.StopBits = sBit;
             //无奇偶校验位
-            serialPort.Parity = System.IO.Ports.Parity.None;
-            serialPort.ReadTimeout = 100;
-            //commBar.serialPort.WriteTimeout = -1;
+            serialPort.Parity = parity;
+            serialPort.Handshake = hShake;
 
-            //serialPort.ReceivedBytesThreshold = 12;
-            //serialPort.Handshake = Handshake.RequestToSend;
-            //serialPort.ReadTimeout = 200;
+            //serialPort.ReadTimeout = 100;
             //serialPort.WriteTimeout = 200;
+            //serialPort.ReceivedBytesThreshold = 12;
 
         }
     }

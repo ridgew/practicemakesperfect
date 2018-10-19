@@ -134,7 +134,8 @@ namespace Common
                         strBarCode += barCode.Chr.ToString();
                     }
                     barCode.Time = DateTime.Now;
-                    if (BarCodeEvent != null) BarCodeEvent(barCode);//触发事件
+                    if (BarCodeEvent != null)
+                        BarCodeEvent(barCode);//触发事件
                     barCode.IsValid = false;
                 }
             }
