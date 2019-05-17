@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Wrox.ProCSharp.AddIns.CalculatorViewToContractAddInAdapter" Collapsed="true">
+    <Position X="1" Y="0.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAiAAAAAA=</HashCode>
+      <FileName>CalculatorViewToContractAddInAdapter.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Wrox.ProCSharp.AddIns.OperationViewToContractAddInAdapter" Collapsed="true">
+    <Position X="1" Y="2.25" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAABAAAAAAQAAAAIAAAAAQAAAAACAAA=</HashCode>
+      <FileName>OperationViewToContractAddInAdapter.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Font Name="宋体" Size="9" />
+</ClassDiagram>

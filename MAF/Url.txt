@@ -1,0 +1,5 @@
+WPF 插件开发（.NET Framework 3.5 System.Addin）
+https://www.cnblogs.com/lc329857895/archive/2009/07/22/1528640.html
+
+《MEF程序设计指南》博文汇总
+http://www.cnblogs.com/beniao/archive/2010/08/11/1797537.html
