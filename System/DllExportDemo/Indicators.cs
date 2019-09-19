@@ -7,7 +7,7 @@ using System.Text;
 namespace DllExportDemo
 {
     [SuppressUnmanagedCodeSecurity]
-    public static class MovingAverage
+    public static class Indicators
     {
 
         [DllImport("shell32.dll")]
@@ -272,22 +272,78 @@ namespace DllExportDemo
 
 
         //https://docs.mql4.com/cn/indicators/ima
-        /*
-         * Calculates the Moving Average indicator and returns its value.
-            double  iMA(
-               string       symbol,           // symbol
-               int          timeframe,        // timeframe
-               int          ma_period,        // MA averaging period
-               int          ma_shift,         // MA shift
-               int          ma_method,        // averaging method
-               int          applied_price,    // applied price
-               int          shift             // shift
-               ); 
-        */
+        /// <summary>
+        /// Calculates the Moving Average indicator and returns its value.
+        /// </summary>
+        /// <param name="symbol">symbol</param>
+        /// <param name="timeframe">timeframe</param>
+        /// <param name="ma_period">MA averaging period</param>
+        /// <param name="ma_shift">MA shift</param>
+        /// <param name="ma_method">averaging method</param>
+        /// <param name="applied_price">applied price</param>
+        /// <param name="shift">shift</param>
+        /// <returns></returns>
         [DllExport]
-        public static double IMA(string symbol, int timeFrame, int period, int maShift, int avgMethod, int priceMode, int shift)
+        public static double iMa(string symbol, int timeframe, int ma_period, int ma_shift, int ma_method, int applied_price, int shift)
         {
             return Math.PI;
         }
+
+        [DllExport]
+        public static bool getIBandsOfPeriod(string symb, int period, ref double[] retVal, int shift = 0)
+        {
+            //retVal[0] = iBands(symb, period, iBandsPeriod, iBandsDeviation, 0, iBandsPrice, MODE_LOWER, shift);
+            //retVal[1] = iBands(symb, period, iBandsPeriod, iBandsDeviation, 0, iBandsPrice, MODE_MAIN, shift);
+            //retVal[2] = iBands(symb, period, iBandsPeriod, iBandsDeviation, 0, iBandsPrice, MODE_UPPER, shift);
+            return true;
+        }
+
+        /// <summary>
+        ///  iBands, Calculates the Bollinger Bands® indicator and returns its value.
+        /// </summary>
+        /// <param name="symbol">symbol</param>
+        /// <param name="timeframe">timeframe</param>
+        /// <param name="period">averaging period </param>
+        /// <param name="deviation">standard deviations </param>
+        /// <param name="bands_shift">bands shift </param>
+        /// <param name="applied_price">applied price </param>
+        /// <param name="mode">line index</param>
+        /// <param name="shift">shift</param>
+        /// <returns></returns>
+        [DllExport]
+        public static double iBands(string symbol, int timeframe, int period, double deviation, int bands_shift, int applied_price, int mode, int shift)
+        {
+            return Math.PI;
+        }
+
+
+
+        [DllExport]
+        public static bool getStoOfPeriod(string symb, int period, ref double[] retVal, int shift = 0)
+        {
+            //retVal[0] = iStochastic(symb, period, kdj_k, kdj_d, kdj_slow, MODE_SMA, 0, MODE_SIGNAL,shift);
+            //retVal[1] = iStochastic(symb, period, kdj_k, kdj_d, kdj_slow, MODE_SMA, 0, MODE_MAIN, shift);
+            return true;
+        }
+
+        /// <summary>
+        /// iStochastic ,Calculates the Stochastic Oscillator and returns its value.
+        /// </summary>
+        /// <param name="symbol">symbol</param>
+        /// <param name="timeframe">timeframe</param>
+        /// <param name="Kperiod">K line period </param>
+        /// <param name="Dperiod">D line period </param>
+        /// <param name="slowing">slowing </param>
+        /// <param name="method">averaging method </param>
+        /// <param name="price_field"> price (Low/High or Close/Close) </param>
+        /// <param name="mode">line index </param>
+        /// <param name="shift">shift</param>
+        /// <returns></returns>
+        [DllExport]
+        public static double iStochastic(string symbol, int timeframe, int Kperiod, int Dperiod, int slowing, int method, int price_field, int mode, int shift)
+        {
+            return Math.PI;
+        }
+
     }
 }

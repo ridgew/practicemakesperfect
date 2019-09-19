@@ -2,3 +2,6 @@
 bin
 obj
 .vs
+/System/DllExportDemo/Debug
+/System/DllExportDemo/packages/DllExport.1.6.5
+/System/rundll32_sampe/Debug
