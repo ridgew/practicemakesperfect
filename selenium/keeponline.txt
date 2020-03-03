@@ -1,0 +1,5 @@
+@rem 锁定
+C:\Windows\System32\rundll32.exe user32.dll,LockWorkStation
+
+@rem 休眠
+C:\Windows\System32\runas.exe /user:administrator /savecred "shutdown /h /f"
