@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace RestartService
@@ -17,22 +16,37 @@ namespace RestartService
             //string result = RemoteCamstarServiceMethod(server, "CamstarSecurityServer.exe", "StopService");
 
             string cmd = null;
+            bool runInPipe = false;
             do
             {
                 if (cmd != null)
                     args = cmd.Split(' ');
 
-                if (args.Length > 0)
+                if (args.Length < 1 || (args.Length == 1 && (args[0] == "/?" || args[0] == "help")))
                 {
-                    string restartServer = GetNamedArguments(args, "-restart");
-                    if (!string.IsNullOrEmpty(restartServer) && IsIPAddress(restartServer))
+                    echo(false, $"请输入指令：{Environment.NewLine} q退出，-pipe 打开管道模式；-X 附加调试器；{Environment.NewLine} -list 192.168.230.100 服务进程；{Environment.NewLine} -restart 重启服务器IP(,多个分隔)；{Environment.NewLine} -stop 停止服务IP； -start 启动服务IP； -serviceName 服务名称；{Environment.NewLine}");
+                    return;
+                }
+                else
+                {
+                    runInPipe = IsTrue(GetNamedArguments(args, "-pipe"));
+                    bool attachDebugger = IsTrue(GetNamedArguments(args, "-X"));
+                    if (attachDebugger && !System.Diagnostics.Debugger.IsAttached)
+                        System.Diagnostics.Debugger.Launch();
+
+                    #region 管道重定向测试
+                    bool redirect = IsTrue(GetNamedArguments(args, "-r"));
+                    if (redirect)
                     {
-                        string ret = Reboot(restartServer);
-                        if (ret == "0")
-                            Console.WriteLine($"重启服务器{restartServer}成功！！");
-                        else
-                            Console.WriteLine($"重启{restartServer}失败：{ret}");
+                        Console.Out.Write(Console.In.ReadToEnd());
+                        Environment.Exit(0);
+                        return;
                     }
+                    #endregion
+
+                    string restartServer = GetNamedArguments(args, "-restart");
+                    if (!string.IsNullOrEmpty(restartServer))
+                        DoRestartServers(runInPipe, restartServer);
 
                     string listServer = GetNamedArguments(args, "-list");
                     if (!string.IsNullOrEmpty(listServer) && IsIPAddress(listServer))
@@ -41,12 +55,12 @@ namespace RestartService
                         var process = GetServerProcess(listServer, ref err);
                         if (process.Count == 0)
                         {
-                            Console.WriteLine($"获取{listServer}服务列表失败：{err}");
+                            echo(runInPipe, $"获取{listServer}服务列表失败：{err}");
                         }
                         else
                         {
                             foreach (var item in process)
-                                Console.WriteLine(item);
+                                echo(runInPipe, item);
                         }
                     }
 
@@ -68,15 +82,26 @@ namespace RestartService
                             ret = RemoteCamstarServiceMethod(startServer, svrName, "StartService");
                         }
 
-                        Console.WriteLine($"{topic} {svrName} {((ret == "0") ? "成功" : ret)}");
+                        echo(runInPipe, $"{topic} {svrName} {((ret == "0") ? "成功" : ret)}");
                     }
                 }
 
-                Console.WriteLine($"请输入指令：{Environment.NewLine} q退出，-list 192.168.230.100 服务进程；{Environment.NewLine} -restart 重启服务器；{Environment.NewLine} -stop 停止服务IP； -start 启动服务IP； -serviceName 服务名称；{Environment.NewLine}");
-                Console.WriteLine();
-                cmd = Console.ReadLine();
+                if (!runInPipe)
+                {
+                    Console.WriteLine(" -- 处理完成，请输入指令继续：（q)退出");
+                    cmd = Console.ReadLine();
+                }
             }
-            while (cmd != "q");
+            while (!runInPipe && cmd != "q");
+
+        }
+
+        static void echo(bool inPipe, string msg)
+        {
+            if (inPipe)
+                Console.Out.WriteLine(msg);
+            else
+                Console.WriteLine(msg);
         }
 
         public static string GetNamedArguments(string[] args, string argsName)
@@ -92,7 +117,7 @@ namespace RestartService
                 if (argRaw.Contains("="))
                     return argRaw.Substring(argRaw.IndexOf('=') + 1);
 
-                if (args.Length > idx + 1)
+                if (args.Length > idx + 1 && !(args[idx + 1].StartsWith("-")))
                     return args[idx + 1];
 
                 return "TRUE";
@@ -103,6 +128,33 @@ namespace RestartService
         public static bool IsTrue(string argsName)
         {
             return argsName != null && (argsName == "1" || argsName == "TRUE" || argsName == "true");
+        }
+
+        static void DoRestartServers(bool runInPipe, string restartServer)
+        {
+            if (restartServer == null)
+                throw new ArgumentNullException(nameof(restartServer));
+
+            string[] servers = restartServer.Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
+            var result = System.Threading.Tasks.Parallel.ForEach(servers, s =>
+            {
+                if (!IsIPAddress(s))
+                    return;
+
+                string ret = Reboot(s);
+                if (ret == "0")
+                {
+                    echo(runInPipe, $"重启服务器{s}成功！！ 暂停10秒检测就绪状态...");
+                    System.Threading.Thread.Sleep(10 * 1000);
+                    WaitToLiving(s, 1, () => echo(runInPipe, "."));
+                    echo(runInPipe, $"服务器{s}已准备就绪！");
+                }
+                else
+                {
+                    echo(runInPipe, $"重启{s}失败：{ret}");
+                }
+
+            });
         }
 
         /// <summary>
@@ -131,7 +183,7 @@ namespace RestartService
                         serviceName = "NotificationServer";
                         break;
                     default:
-                        return "-1";
+                        return "服务不支持，需为\"InSiteXMLServer.exe,Camstar.Security.LMServer.exe,CamstarSecurityServer.exe,CamstarNotificationServer.exe\"中的一种。";
                 }
 
                 ManagementScope scope = new ManagementScope($@"\\{server}\root\cimv2");
@@ -146,6 +198,32 @@ namespace RestartService
             catch (Exception exception)
             {
                 return exception.Message;
+            }
+        }
+
+        static void WaitToLiving(string server, int intervals = 1, Action redo = null)
+        {
+            bool isOk = false;
+
+            while (!isOk)
+            {
+                try
+                {
+                    ManagementScope scope = new ManagementScope($@"\\{server}\root\cimv2");
+                    scope.Connect();
+                    isOk = true;
+                }
+                catch (Exception)
+                {
+                    isOk = false;
+                }
+
+                if (!isOk)
+                {
+                    System.Threading.Thread.Sleep(intervals * 1000);
+                    if (redo != null)
+                        redo();
+                }
             }
         }
 
@@ -172,7 +250,6 @@ namespace RestartService
             {
                 return exception.Message;
             }
-
         }
 
         /// <summary>
