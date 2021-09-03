@@ -24,7 +24,7 @@ namespace RestartService
 
                 if (args.Length < 1 || (args.Length == 1 && (args[0] == "/?" || args[0] == "help")))
                 {
-                    echo(false, $"请输入指令：{Environment.NewLine} q退出，-pipe 打开管道模式；-X 附加调试器；{Environment.NewLine} -list 192.168.230.100 服务进程；{Environment.NewLine} -restart 重启服务器IP(,多个分隔)；{Environment.NewLine} -stop 停止服务IP； -start 启动服务IP； -serviceName 服务名称；{Environment.NewLine}");
+                    echo(false, $"请输入指令：{Environment.NewLine} q退出，-pipe 打开管道模式；-X 附加调试器；{Environment.NewLine} -list 192.168.230.100 Camstar服务进程；{Environment.NewLine} -restart 重启服务器IP(,多个分隔)；{Environment.NewLine} -stop 停止服务IP； -start 启动服务IP； -serviceName 服务名称；{Environment.NewLine}");
                     return;
                 }
                 else
@@ -59,8 +59,15 @@ namespace RestartService
                         }
                         else
                         {
+                            string[] camstarProcess = "InSiteXMLServer.exe;Camstar.Security.LMServer.exe;CamstarSecurityServer.exe;CamstarNotificationServer.exe".Split(';');
                             foreach (var item in process)
-                                echo(runInPipe, item);
+                                echo(runInPipe, item, true, ConsoleColor.Green);
+
+                            Array.ForEach(camstarProcess.Except(process.ToArray()).ToArray(), f =>
+                            {
+                                echo(runInPipe, "*" + f, true, ConsoleColor.Red);
+                            });
+
                         }
                     }
 
@@ -96,12 +103,32 @@ namespace RestartService
 
         }
 
-        static void echo(bool inPipe, string msg)
+        static void echo(bool inPipe, string msg, bool lineWriter = true, ConsoleColor color = ConsoleColor.White)
         {
             if (inPipe)
+            {
                 Console.Out.WriteLine(msg);
+            }
             else
-                Console.WriteLine(msg);
+            {
+                if (color == ConsoleColor.White)
+                {
+                    if (lineWriter)
+                        Console.WriteLine(msg);
+                    else
+                        Console.Write(msg);
+                }
+                else
+                {
+                    ConsoleColor old = Console.ForegroundColor;
+                    Console.ForegroundColor = color;
+                    if (lineWriter)
+                        Console.WriteLine(msg);
+                    else
+                        Console.Write(msg);
+                    Console.ForegroundColor = old;
+                }
+            }
         }
 
         public static string GetNamedArguments(string[] args, string argsName)
@@ -146,7 +173,7 @@ namespace RestartService
                 {
                     echo(runInPipe, $"重启服务器{s}成功！！ 暂停10秒检测就绪状态...");
                     System.Threading.Thread.Sleep(10 * 1000);
-                    WaitToLiving(s, 1, () => echo(runInPipe, "."));
+                    WaitToLiving(s, 1, () => echo(runInPipe, ".", false));
                     echo(runInPipe, $"服务器{s}已准备就绪！");
                 }
                 else
